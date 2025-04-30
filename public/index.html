@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Balance It Out: Algebra Challenge – Step-by-Step Operations</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #e0f7fa, #fff);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .container {
+      display: flex;
+      max-width: 1100px;
+      width: 100%;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .main-content {
+      flex: 1;
+      max-width: 800px;
+      margin-right: 20px;
+      text-align: center;
+      background-color: #ffffffcc;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    }
+    .sidebar {
+      width: 300px;
+      background-color: #ffecb3;
+      border: 2px solid #ffb300;
+      border-radius: 8px;
+      padding: 15px;
+      height: fit-content;
+      text-align: left;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      color: #333;
+    }
+    .instructions {
+      background: linear-gradient(to right, #ffebee, #fce4ec);
+      border: 1px solid #f48fb1;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .instructions p, .instructions ul {
+      margin: 10px 0;
+      font-size: 1em;
+      line-height: 1.4em;
+      color: #444;
+    }
+    .instructions ul {
+      padding-left: 20px;
+    }
+    .equation-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px auto;
+    }
+    .equation-box {
+      border: 2px solid #00796b;
+      border-radius: 8px;
+      background-color: #b2dfdb;
+      padding: 20px;
+      margin: 0 10px;
+      min-width: 150px;
+      font-size: 1.5em;
+      color: #004d40;
+    }
+    .equals {
+      font-size: 2em;
+      margin: 0 10px;
+      color: #00796b;
+    }
+    .input-container {
+      margin: 20px 0;
+    }
+    select, input {
+      padding: 10px;
+      font-size: 1em;
+      margin: 5px;
+      width: 110px;
+      border: 1px solid #00796b;
+      border-radius: 4px;
+    }
+    /* Dropdown for operand type styling */
+    .operand-type {
+      width: 130px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px 5px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      background-color: #00796b;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #004d40;
+    }
+    #feedback, #hint {
+      font-size: 1.2em;
+      margin: 20px auto;
+      color: #333;
+      max-width: 600px;
+    }
+    /* Balance Scale CSS */
+    .balance-scale {
+      position: relative;
+      width: 300px;
+      height: 200px;
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .beam {
+      width: 100%;
+      height: 10px;
+      background-color: #00796b;
+      position: absolute;
+      top: 50%;
+      transform-origin: center;
+      transition: transform 0.5s ease;
+      border-radius: 5px;
+    }
+    .pan {
+      width: 80px;
+      height: 20px;
+      background-color: #004d40;
+      position: absolute;
+      top: 60%;
+      border-radius: 5px;
+    }
+    .left-pan { left: 0; }
+    .right-pan { right: 0; }
+    /* Sidebar operation tips */
+    .sidebar h2 {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      color: #bf360c;
+    }
+    .sidebar p, .sidebar li {
+      font-size: 0.95em;
+      margin: 8px 0;
+      line-height: 1.4em;
+      color: #5d4037;
+    }
+    .sidebar ul { padding-left: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="main-content">
+      <h1>Balance It Out: Algebra Challenge</h1>
+
+      <!-- Instructions Section -->
+      <div class="instructions">
+        <h2>How to Play</h2>
+        <p>This interactive challenge helps you practise solving equations step by step. An equation is displayed with the left-hand side (LHS) and right-hand side (RHS) in separate boxes. Your aim is to isolate the variable <strong>x</strong> by performing the same operation on both sides.</p>
+        <p>
+          The game has three types of equations:
+          <ul>
+            <li><strong>Questions 1–10:</strong> <em>Example: 3x + 5 = 11</em></li>
+            <li><strong>Questions 11–20:</strong> <em>Example: (2x + 4) ÷ 3 = 6</em></li>
+            <li><strong>Questions 21–30:</strong> <em>Example: 2x + 3 = 5x + 5</em></li>
+          </ul>
+        </p>
+        <p>A balance scale visual shows how the equation compares to its original form. Click <strong>New Equation</strong> for a new problem (after 30 questions the game resets).</p>
+      </div>
+
+      <!-- Balance Scale -->
+      <div class="balance-scale">
+        <div class="beam"></div>
+        <div class="pan left-pan"></div>
+        <div class="pan right-pan"></div>
+      </div>
+
+      <!-- Equation Display -->
+      <div class="equation-container">
+        <div class="equation-box" id="lhsBox">LHS</div>
+        <div class="equals">=</div>
+        <div class="equation-box" id="rhsBox">RHS</div>
+      </div>
+
+      <!-- Controls for operating on the LHS -->
+      <div class="input-container">
+        <h2>Operate on Left Side</h2>
+        <select id="operatorLeft">
+          <option value="+">+ (Add)</option>
+          <option value="-">- (Subtract)</option>
+          <option value="*">× (Multiply)</option>
+          <option value="/">÷ (Divide)</option>
+        </select>
+        <!-- Operand type dropdown (visible only for Questions 21-30) -->
+        <select id="operandTypeLeft" class="operand-type">
+          <option value="constant">Constant</option>
+          <option value="x">x Term</option>
+        </select>
+        <input type="number" id="operandLeft" placeholder="Number">
+        <button onclick="applyOperation('left')">Apply to LHS</button>
+      </div>
+
+      <!-- Controls for operating on the RHS -->
+      <div class="input-container">
+        <h2>Operate on Right Side</h2>
+        <select id="operatorRight">
+          <option value="+">+ (Add)</option>
+          <option value="-">- (Subtract)</option>
+          <option value="*">× (Multiply)</option>
+          <option value="/">÷ (Divide)</option>
+        </select>
+        <!-- Operand type dropdown (visible only for Questions 21-30) -->
+        <select id="operandTypeRight" class="operand-type">
+          <option value="constant">Constant</option>
+          <option value="x">x Term</option>
+        </select>
+        <input type="number" id="operandRight" placeholder="Number">
+        <button onclick="applyOperation('right')">Apply to RHS</button>
+      </div>
+
+      <button onclick="checkIfSolved()">Check if Solved</button>
+      <button onclick="newEquation()">New Equation</button>
+      <button onclick="showHint()">Show Hint</button>
+
+      <div id="feedback"></div>
+      <div id="hint"></div>
+
+      <script>
+        /***************************************************************
+         * Equation and Operation Logic
+         *
+         * Equations are stored symbolically in one of these forms:
+         *   { form: "ax+b", a: number, b: number }
+         *   { form: "ax/d", a: number, d: number }
+         *   { form: "ax+b/d", a: number, b: number, d: number }
+         *   { form: "x" }
+         *   { form: "const", val: number }
+         *
+         * Note: For Questions 21–30 both sides are variable expressions of the form (ax+b).
+         ***************************************************************/
+
+        let leftSide, rightSide;
+        let leftSideOriginal, rightSideOriginal;
+        let questionCount = 0;
+
+        /*========== 1) Creating Side Objects ==========
+         * These functions create the different symbolic forms for each side of the equation.
+         */
+        function makeAxPlusB(a, b) { return { form: "ax+b", a, b }; }
+        function makeAxOverD(a, d) { return { form: "ax/d", a, d }; }
+        function makeAxPlusBD(a, b, d) { return { form: "ax+b/d", a, b, d }; }
+        function makeX() { return { form: "x" }; }
+        function makeConst(val) { return { form: "const", val }; }
+
+        /*========== 2) Generating Random Equations ==========
+         * Depending on the question number, different types of equations are generated:
+         * - Questions 1–10: Standard equations (ax+b = constant) or (ax/d = constant)
+         * - Questions 11–20: Fraction equations ((ax+b)/d = constant)
+         * - Questions 21–30: Equations with variables on both sides (ax+b = cx+d)
+         */
+        function randInt(min, max) {
+          return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        function divisorsOf(n) {
+          let divs = [];
+          for (let i = 1; i <= Math.abs(n); i++){
+            if(n % i === 0) divs.push(i);
+          }
+          return divs;
+        }
+
+        // Generator for standard equations (Questions 1–10)
+        function buildRandomEquation() {
+          if (Math.random() < 0.5) {
+            // Equation: a*x + b = c
+            let a = randInt(1, 5);
+            let xVal = randInt(1, 5);
+            let b = randInt(-5, 5);
+            let c = a * xVal + b;
+            leftSide = makeAxPlusB(a, b);
+            rightSide = makeConst(c);
+          } else {
+            // Equation: (a*x)/d = c; ensure denominator is not 1.
+            let a = randInt(1, 5);
+            let xVal = randInt(1, 5);
+            let product = a * xVal;
+            // Select a divisor other than 1, with an upper limit of 10.
+            let possibleD = divisorsOf(product).filter(d => d <= 10 && d !== 1);
+            // Fallback: if no valid divisor found, use 2.
+            if (possibleD.length === 0) possibleD = [2];
+            let d = possibleD[randInt(0, possibleD.length - 1)];
+            let c = product / d;
+            leftSide = makeAxOverD(a, d);
+            rightSide = makeConst(c);
+          }
+          leftSideOriginal = JSON.parse(JSON.stringify(leftSide));
+          rightSideOriginal = JSON.parse(JSON.stringify(rightSide));
+        }
+
+        // Generator for fraction equations (Questions 11–20): (a*x + b)/d = c
+        function buildRandomEquation2() {
+          let a, xVal, b, numerator, possibleD, d, c;
+          // Ensure numerator has a divisor other than 1.
+          do {
+            a = randInt(1, 5);
+            xVal = randInt(1, 5);
+            b = randInt(-5, 5);
+            numerator = a * xVal + b;
+            possibleD = divisorsOf(numerator).filter(d => d <= 10 && d !== 1);
+          } while (possibleD.length === 0);
+          d = possibleD[randInt(0, possibleD.length - 1)];
+          c = numerator / d;
+          leftSide = makeAxPlusBD(a, b, d);
+          rightSide = makeConst(c);
+          leftSideOriginal = JSON.parse(JSON.stringify(leftSide));
+          rightSideOriginal = JSON.parse(JSON.stringify(rightSide));
+        }
+
+        // Generator for equations with variables on both sides (Questions 21–30): ax+b = cx+d
+        function buildRandomEquation3() {
+          let a = randInt(1, 5);
+          let c;
+          do { c = randInt(1, 5); } while(a === c);
+          let b = randInt(-5, 5);
+          let d = randInt(-5, 5);
+          leftSide = makeAxPlusB(a, b);
+          rightSide = makeAxPlusB(c, d);
+          leftSideOriginal = JSON.parse(JSON.stringify(leftSide));
+          rightSideOriginal = JSON.parse(JSON.stringify(rightSide));
+        }
+
+        /*========== 3) Converting a Side to String ==========
+         * Returns a string representation of the given side, depending on its form.
+         */
+        function sideToString(side) {
+          switch(side.form) {
+            case "ax+b":
+              let aStr = (Math.abs(side.a - 1) < 1e-10) ? "x" : side.a + "x";
+              if (Math.abs(side.b) < 1e-10) return aStr;
+              return side.b > 0 ? aStr + " + " + side.b : aStr + " - " + Math.abs(side.b);
+            case "ax/d":
+              return (Math.abs(side.a - 1) < 1e-10) ? "x/" + side.d : side.a + "x/" + side.d;
+            case "ax+b/d":
+              let numerator = (Math.abs(side.a - 1) < 1e-10) ? "x" : side.a + "x";
+              if (Math.abs(side.b) >= 1e-10) {
+                numerator += side.b > 0 ? " + " + side.b : " - " + Math.abs(side.b);
+              }
+              return "(" + numerator + ")/" + side.d;
+            case "x": return "x";
+            case "const": return "" + side.val;
+          }
+        }
+
+        /*========== 4) Simplifying a Side After Operations ==========
+         * Rounds coefficients to 2 decimal places and converts forms when possible.
+         */
+        function simplify(side) {
+          const r2 = v => Math.round(v * 100) / 100; // Round to 2 decimal places
+          if (side.form === "ax+b") {
+            side.a = r2(side.a); side.b = r2(side.b);
+            if (Math.abs(side.a) < 1e-10) return makeConst(side.b);
+            if (Math.abs(side.b) < 1e-10) side.b = 0;
+            if (Math.abs(side.a - 1) < 1e-10 && Math.abs(side.b) < 1e-10) return makeX();
+            return side;
+          } else if (side.form === "ax/d") {
+            side.a = r2(side.a); side.d = r2(side.d);
+            if (Math.abs(side.d - 1) < 1e-10) return simplify({ form: "ax+b", a: side.a, b: 0 });
+            if (Math.abs(side.a) < 1e-10) return makeConst(0);
+            if (Number.isInteger(side.a) && Number.isInteger(side.d) && side.a % side.d === 0)
+              return simplify({ form: "ax+b", a: side.a / side.d, b: 0 });
+            return side;
+          } else if (side.form === "ax+b/d") {
+            side.a = r2(side.a); side.b = r2(side.b); side.d = r2(side.d);
+            if (Math.abs(side.d - 1) < 1e-10) return simplify({ form: "ax+b", a: side.a, b: side.b });
+            if (Number.isInteger(side.a) && Number.isInteger(side.b) && Number.isInteger(side.d) &&
+                side.a % side.d === 0 && side.b % side.d === 0)
+              return simplify({ form: "ax+b", a: side.a / side.d, b: side.b / side.d });
+            return side;
+          } else if (side.form === "x") { return side; }
+          else if (side.form === "const") { side.val = r2(side.val); return side; }
+          return side;
+        }
+
+        /*========== 5) Applying an Operation to a Side ==========
+         * opType is either "constant" or "x". For x operations, only addition/subtraction is supported.
+         * Depending on the type, the operation is applied to the appropriate component of the side.
+         */
+        function applyOpToSide(side, op, k, opType) {
+          if(opType === "x") {
+            // Only addition/subtraction affect the x coefficient
+            if (side.form === "ax+b" || side.form === "ax+b/d" || side.form === "ax/d" || side.form === "x") {
+              if(op === "+") {
+                if(side.form === "x") {
+                  side = { form: "ax+b", a: 1 + k, b: 0 };
+                } else {
+                  side.a += k;
+                }
+                return simplify(side);
+              } else if(op === "-") {
+                if(side.form === "x") {
+                  side = { form: "ax+b", a: 1 - k, b: 0 };
+                } else {
+                  side.a -= k;
+                }
+                return simplify(side);
+              } else {
+                // Other operations are not supported for x-type operands
+                return side;
+              }
+            } else {
+              return side;
+            }
+          }
+          if(opType === "constant") {
+            // For constant operations, adjust the constant term or overall value.
+            switch (side.form) {
+              case "ax/d":
+                if (op === "*") { side.a *= k; return simplify(side); }
+                else if (op === "+") { let numericVal = side.a / side.d; numericVal += k; return simplify({ form: "const", val: numericVal }); }
+                else if (op === "-") { let numericVal = side.a / side.d; numericVal -= k; return simplify({ form: "const", val: numericVal }); }
+                else if (op === "/") { if (k === 0) return side; side.d *= k; return simplify(side); }
+                return side;
+              case "ax+b":
+                if (op === "+") { side.b += k; return simplify(side); }
+                else if (op === "-") { side.b -= k; return simplify(side); }
+                else if (op === "*") { side.a *= k; side.b *= k; return simplify(side); }
+                else if (op === "/") { if (k === 0) return side; side.a /= k; side.b /= k; return simplify(side); }
+                return side;
+              case "ax+b/d":
+                if (op === "*") { side.a *= k; side.b *= k; return simplify(side); }
+                else if (op === "/") { if (k === 0) return side; side.d *= k; return simplify(side); }
+                else if (op === "+") { side.b += k * side.d; return simplify(side); }
+                else if (op === "-") { side.b -= k * side.d; return simplify(side); }
+                return side;
+              case "x":
+                if (op === "+") return simplify({ form: "ax+b", a: 1, b: k });
+                else if (op === "-") return simplify({ form: "ax+b", a: 1, b: -k });
+                else if (op === "*") return simplify({ form: "ax+b", a: k, b: 0 });
+                else if (op === "/") { if (k === 0) return side; return simplify({ form: "ax/d", a: 1, d: k }); }
+                return side;
+              case "const":
+                if (op === "+") { side.val += k; }
+                else if (op === "-") { side.val -= k; }
+                else if (op === "*") { side.val *= k; }
+                else if (op === "/") { if (k === 0) return side; side.val /= k; }
+                return simplify(side);
+            }
+          }
+          return side;
+        }
+
+        /*========== 6) Updating the User Interface ==========
+         * This function updates the equation display and the balance scale visual.
+         */
+        function updateDisplay() {
+          document.getElementById("lhsBox").textContent = sideToString(leftSide);
+          document.getElementById("rhsBox").textContent = sideToString(rightSide);
+          updateBalanceScale();
+        }
+
+        /*========== 7) Main Functions ==========
+         * newEquation(): Generates a new equation based on the current question number.
+         * applyOperation(): Reads user input, applies the operation to the selected side, and updates the display.
+         * checkIfSolved(): Checks whether the equation has been solved (x isolated).
+         */
+        function newEquation() {
+          questionCount++;
+          if (questionCount <= 10) {
+            buildRandomEquation();
+          } else if (questionCount <= 20) {
+            buildRandomEquation2();
+          } else if (questionCount <= 30) {
+            buildRandomEquation3();
+          } else {
+            questionCount = 1;
+            buildRandomEquation();
+          }
+          updateDisplay();
+          document.getElementById("feedback").textContent = `New random equation generated. (Question ${questionCount} of 30)`;
+          document.getElementById("operandLeft").value = "";
+          document.getElementById("operandRight").value = "";
+          document.getElementById("operatorLeft").value = "+";
+          document.getElementById("operatorRight").value = "+";
+          // Show or hide operand type dropdowns for Questions 21–30.
+          if (questionCount >= 21 && questionCount <= 30) {
+            document.getElementById("operandTypeLeft").style.display = "inline-block";
+            document.getElementById("operandTypeRight").style.display = "inline-block";
+          } else {
+            document.getElementById("operandTypeLeft").style.display = "none";
+            document.getElementById("operandTypeRight").style.display = "none";
+          }
+          // Clear any previous hint.
+          document.getElementById("hint").textContent = "";
+        }
+
+        function applyOperation(side) {
+          let op, k, opType;
+          if (side === "left") {
+            op = document.getElementById("operatorLeft").value;
+            opType = (document.getElementById("operandTypeLeft").style.display !== "none") ?
+                      document.getElementById("operandTypeLeft").value : "constant";
+            k = Number(document.getElementById("operandLeft").value);
+            leftSide = applyOpToSide(leftSide, op, k, opType);
+          } else {
+            op = document.getElementById("operatorRight").value;
+            opType = (document.getElementById("operandTypeRight").style.display !== "none") ?
+                      document.getElementById("operandTypeRight").value : "constant";
+            k = Number(document.getElementById("operandRight").value);
+            rightSide = applyOpToSide(rightSide, op, k, opType);
+          }
+          updateDisplay();
+          document.getElementById("feedback").textContent =
+            `Applied "${op} ${k}" (${opType}) to ${side.toUpperCase()} side. (Question ${questionCount} of 30)`;
+        }
+
+        function checkIfSolved() {
+          if (leftSide.form === "x" && rightSide.form === "const") {
+            document.getElementById("feedback").textContent = `Solved! x = ${rightSide.val}`;
+          } else if (rightSide.form === "x" && leftSide.form === "const") {
+            document.getElementById("feedback").textContent = `Solved! x = ${leftSide.val}`;
+          } else if (leftSide.form === "const" && rightSide.form === "const") {
+            if (Math.abs(leftSide.val - rightSide.val) < 1e-10)
+              document.getElementById("feedback").textContent = `Both sides equal ${leftSide.val}. (No variable left.)`;
+            else
+              document.getElementById("feedback").textContent = `Both sides are constants but not equal. Not solved for x.`;
+          } else {
+            document.getElementById("feedback").textContent =
+              `Not solved yet. LHS: ${sideToString(leftSide)}, RHS: ${sideToString(rightSide)}`;
+          }
+        }
+
+        /*========== Balance Scale Logic ==========
+         * The balance scale is a visual representation of the equation.
+         * It uses a solved x value (based on the original equation) to compute the numerical value of each side,
+         * then tilts the beam based on the difference.
+         */
+        function getSideValue(side, xValue) {
+          switch (side.form) {
+            case "ax+b": return side.a * xValue + side.b;
+            case "ax/d": return (side.a * xValue) / side.d;
+            case "ax+b/d": return (side.a * xValue + side.b) / side.d;
+            case "x": return xValue;
+            case "const": return side.val;
+            default: return 0;
+          }
+        }
+
+        // Solves the original equation for x, depending on its form.
+        function solveForX() {
+          if (leftSideOriginal.form === "ax+b" && rightSideOriginal.form === "const")
+            return (rightSideOriginal.val - leftSideOriginal.b) / leftSideOriginal.a;
+          else if (leftSideOriginal.form === "ax/d" && rightSideOriginal.form === "const")
+            return (rightSideOriginal.val * leftSideOriginal.d) / leftSideOriginal.a;
+          else if (leftSideOriginal.form === "ax+b/d" && rightSideOriginal.form === "const")
+            return (rightSideOriginal.val * leftSideOriginal.d - leftSideOriginal.b) / leftSideOriginal.a;
+          else if (leftSideOriginal.form === "ax+b" && rightSideOriginal.form === "ax+b")
+            return (rightSideOriginal.b - leftSideOriginal.b) / (leftSideOriginal.a - rightSideOriginal.a);
+          else return 1;
+        }
+
+        function updateBalanceScale() {
+          const beam = document.querySelector('.beam');
+          const xValue = solveForX();
+          const lhsValue = getSideValue(leftSide, xValue);
+          const rhsValue = getSideValue(rightSide, xValue);
+          const difference = lhsValue - rhsValue;
+          const tilt = Math.min(Math.max(difference * 5, -30), 30);
+          beam.style.transform = `rotate(${tilt}deg)`;
+        }
+
+        // Display a hint based on the current question number.
+        function showHint() {
+          let hintText = "";
+          if (questionCount >= 21 && questionCount <= 30) {
+            hintText = "Hint: For equations with variables on both sides, try to move all the x terms to one side and the constants to the other.";
+          } else {
+            hintText = "Hint: Simplify the equation step by step to isolate x.";
+          }
+          document.getElementById("hint").textContent = hintText;
+        }
+
+        // Initialise the game with a new equation.
+        newEquation();
+      </script>
+    </div>
+
+    <!-- Sidebar with in-depth operation tips -->
+    <div class="sidebar">
+      <h2>Operation Tips</h2>
+      <p>
+        When solving equations, you must perform the same operation on both sides to keep the equation balanced – just like a scale. Below are detailed tips for each operation with clear examples.
+      </p>
+      <ul>
+        <li>
+          <strong>Addition:</strong> 
+          <br>
+          <em>Tip:</em> Adding a constant moves the entire expression up by that amount. When adding an x term (for Questions 21–30), you increase the coefficient of x.
+          <br>
+          <em>Example:</em> If you have 3x + 5 = 11 and you add 2 to both sides, the equation becomes 3x + 7 = 13.
+        </li>
+        <li>
+          <strong>Subtraction:</strong>
+          <br>
+          <em>Tip:</em> Subtracting a constant lowers the value of the expression. Subtracting an x term reduces the coefficient of x.
+          <br>
+          <em>Example:</em> With 4x + 8 = 20, subtracting 8 from both sides gives 4x = 12.
+        </li>
+        <li>
+          <strong>Multiplication:</strong>
+          <br>
+          <em>Tip:</em> Multiplying scales the entire expression. This is useful when you need to eliminate fractions or adjust coefficients.
+          <br>
+          <em>Example:</em> For the equation (x + 3) ÷ 2 = 5, multiplying both sides by 2 gives x + 3 = 10.
+        </li>
+        <li>
+          <strong>Division:</strong>
+          <br>
+          <em>Tip:</em> Dividing reduces the entire expression by a factor. This is often the final step to isolate x.
+          <br>
+          <em>Example:</em> In 6x = 18, dividing both sides by 6 gives x = 3.
+        </li>
+      </ul>
+      <p>
+        For equations with variables on both sides (e.g. 2x + 3 = 5x + 5), your goal is to collect all the x terms on one side and the constants on the other. Remember: every operation performed on one side must also be performed on the other.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
